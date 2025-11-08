@@ -1,0 +1,317 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+
+    background: linear-gradient(135deg, #6a11cb, #2575fc, #30cfd0);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #1a1a2e; /* Un color de texto oscuro casi negro/azulado */
+    padding: 25px;
+    min-height: 100vh;
+}
+
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 3em;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+}
+
+h2 {
+    text-align: center;
+    color: #ffffff;
+    font-weight: 600;
+    margin: 40px 0 20px 0;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+hr {
+
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    width: 80%;
+    margin: 40px auto;
+}
+
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    padding: 30px;
+}
+
+
+form.glass-card {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+form > div {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #1a1a2e;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+    color: #1a1a2e;
+}
+
+input::placeholder {
+    color: #5a5a7a;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #6a11cb;
+    box-shadow: 0 0 10px rgba(106, 17, 203, 0.5);
+}
+
+button[type="submit"] {
+    display: inline-block;
+    width: 100%;
+    background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(255, 78, 80, 0.4);
+}
+
+
+.collection-grid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+
+.item-card {
+
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-card h3 {
+    font-size: 1.5em;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+}
+
+.item-card p {
+    margin-bottom: 10px;
+}
+
+
+.item-card p strong {
+    font-size: 1.4em;
+    color: #1a1a2e;
+    display: block;
+    text-align: right;
+    margin-top: 15px;
+    color: #004d40;
+}
+
+
+.item-card p:last-of-type {
+    font-style: italic;
+    color: #333;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 10px;
+    border-left: 4px solid #f9d423;
+    border-radius: 4px;
+    margin-top: auto;
+}
+
+
+.empty-state {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #ffffff;
+    padding: 40px;
+
+
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+
+dialog {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    width: 350px;
+    text-align: center;
+    background: #ffffff;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+#ws-message {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+}
+
+#ws-button {
+    background: #2575fc;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+
+#ws-button:hover {
+    background-color: #1a5cbf;
+}
+
+.error-box {
+    background-color: rgba(255, 235, 238, 0.8); /* Rojo claro semi-transparente */
+    border: 1px solid #c0392b;
+    color: #c0392b; /* Rojo oscuro */
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+
+    /* Centrado, igual que tu formulario */
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.success-box {
+    background-color: rgba(232, 245, 233, 0.8); /* Verde claro semi-transparente */
+    border: 1px solid #28a745;
+    color: #155724; /* Verde oscuro */
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+
+    /* Centrado, igual que tu formulario */
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.filter-form {
+    /* Reutilizamos el efecto de cristal */
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    padding: 25px;
+
+    /* Diseño flexible para alinear campos */
+    display: flex;
+    flex-wrap: wrap; /* Permite que los campos bajen en pantallas pequeñas */
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+
+    max-width: 900px; /* Puedes ajustar esto */
+    margin: 20px auto;
+}
+
+.filter-group {
+    flex: 1; /* Cada grupo de filtro crecerá */
+    min-width: 180px; /* Ancho mínimo antes de envolver */
+}
+
+.filter-form label {
+    font-weight: bold;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.filter-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+}
+
+.filter-form button {
+    background: #2575fc; /* Un azul que combina */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    height: 48px; /* Alinea la altura con los inputs */
+}
+
+.filter-form button:hover {
+    background-color: #1a5cbf;
+}

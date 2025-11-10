@@ -1,7 +1,10 @@
+DROP TABLE IF EXISTS offers;
+DROP TABLE IF EXISTS items;
+
 CREATE TABLE items (
     id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description VARCHAR(1000), -- Usamos VARCHAR en lugar de TEXT para H2
+    description VARCHAR(1000),
     price DECIMAL(10, 2) NOT NULL
 );
 

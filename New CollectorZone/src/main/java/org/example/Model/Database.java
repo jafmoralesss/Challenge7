@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Database {
 
-    private static final String DEV_DB_URL = "jdbc:h2:mem:collectorzone;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:setup-dev.sql'";
+    private static final String DEV_DB_URL = "jdbc:h2:mem:collectorzone;DB_CLOSE_DELAY=-1";
     private static final String DEV_USER = "sa";
     private static final String DEV_PASS = "";
 

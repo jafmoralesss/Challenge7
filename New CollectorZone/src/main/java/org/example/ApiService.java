@@ -2,19 +2,56 @@ package org.example;
 
 import com.google.gson.Gson;
 import org.example.Controller.ItemController;
-import org.example.Controller.ItemWebController; // <-- IMPORT THIS
+import org.example.Controller.ItemWebController;
 import org.example.Controller.OfferController;
 import org.example.Controller.OfferWebController;
 import org.example.Model.ApiError;
 import org.example.Model.ApiException;
 import org.example.Model.ItemService;
 import org.example.Model.OfferService;
+import org.example.Model.Database;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.util.stream.Collectors;
 
 import static spark.Spark.*;
 
 public class ApiService {
 
+    public static void runInitScript() {
+        String script = "";
+        try (InputStream is = ApiService.class.getClassLoader().getResourceAsStream("setup-dev.sql")) {
+            if (is == null) {
+                System.err.println("setup-dev.sql not found.");
+                return;
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                script = reader.lines().collect(Collectors.joining("\n"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (Connection conn = Database.getConnection();
+             Statement stmt = conn.createStatement()) {
+            System.out.println("Executing setup-dev.sql...");
+            stmt.execute(script);
+            System.out.println("Script completed.");
+        } catch (Exception e) {
+            System.err.println("Error when executing setup-dev.sql:");
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
+
+        if (System.getenv("APP_ENV") == null || !System.getenv("APP_ENV").equals("prod")) {
+            runInitScript();
+        }
 
         ItemService itemService = new ItemService();
         OfferService offerService = new OfferService(itemService);

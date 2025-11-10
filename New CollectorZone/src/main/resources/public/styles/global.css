@@ -231,30 +231,42 @@ dialog::backdrop {
     background-color: #1a5cbf;
 }
 
-.error-box {
-    background-color: rgba(255, 235, 238, 0.8); /* Rojo claro semi-transparente */
-    border: 1px solid #c0392b;
-    color: #c0392b; /* Rojo oscuro */
+.error-box, .success-box {
+
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -100px);
+
+    max-width: 500px;
+    width: 90%;
+    z-index: 1000;
     padding: 15px 20px;
     border-radius: 8px;
     font-weight: 500;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 
-    /* Centrado, igual que tu formulario */
-    max-width: 600px;
-    margin: 20px auto;
+    visibility: hidden;
+    opacity: 0;
+
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s;
 }
 
+.error-box {
+    background-color: rgba(255, 235, 238, 0.95);
+    border: 1px solid #c0392b;
+    color: #c0392b;
+}
 .success-box {
-    background-color: rgba(232, 245, 233, 0.8); /* Verde claro semi-transparente */
+    background-color: rgba(232, 245, 233, 0.95);
     border: 1px solid #28a745;
-    color: #155724; /* Verde oscuro */
-    padding: 15px 20px;
-    border-radius: 8px;
-    font-weight: 500;
+    color: #155724;
+}
 
-    /* Centrado, igual que tu formulario */
-    max-width: 600px;
-    margin: 20px auto;
+.error-box.show, .success-box.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translate(-50%, 0);
 }
 
 .filter-form {

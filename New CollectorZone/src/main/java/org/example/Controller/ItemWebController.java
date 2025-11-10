@@ -1,9 +1,6 @@
 package org.example.Controller;
 
-import org.example.Model.CollectibleItem;
-import org.example.Model.ItemService;
-import org.example.Model.Offer;
-import org.example.Model.OfferService;
+import org.example.Model.*;
 import org.example.dto.ItemWebResponse;
 import spark.ModelAndView;
 import spark.Request;
@@ -111,25 +108,34 @@ public class ItemWebController {
         return templateEngine.render(mav);
     }
 
-    /**
-     * Handles POST /items-web
-     * Procesa el formulario "Add New Item".
-     */
+
     public String handleItemForm(Request req, Response res) {
-        String name = req.queryParams("itemName");
-        String description = req.queryParams("itemDescription");
-        String imageUrl = req.queryParams("itemImageUrl");
-        double price = Double.parseDouble(req.queryParams("itemPrice"));
 
-        String id = UUID.randomUUID().toString();
-        CollectibleItem newItem = new CollectibleItem(id, name, description, price);
+        try {
+            String name = req.queryParams("itemName");
+            String description = req.queryParams("itemDescription");
+            String imageUrl = req.queryParams("itemImageUrl");
+            double price = Double.parseDouble(req.queryParams("itemPrice"));
 
-        itemService.createItem(id, newItem);
+            String id = UUID.randomUUID().toString();
+            CollectibleItem newItem = new CollectibleItem(id, name, description, price);
 
-        req.session(true);
-        req.session().attribute("successMessage", "New item '" + name + "' added successfully!");
+            itemService.createItem(id, newItem);
 
-        res.redirect("/items-web");
+            req.session(true);
+            req.session().attribute("successMessage", "New item '" + name + "' added successfully!");
+            res.redirect("/items-web");
+
+        } catch (ApiException e) {
+            req.session(true);
+            req.session().attribute("errorMessage", e.getMessage());
+            res.redirect("/items-web");
+
+        } catch (NumberFormatException e) {
+            req.session(true);
+            req.session().attribute("errorMessage", "Invalid price format. Please enter a valid number.");
+            res.redirect("/items-web");
+        }
         return null;
     }
 }

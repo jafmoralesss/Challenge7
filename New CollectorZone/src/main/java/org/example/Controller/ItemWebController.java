@@ -121,7 +121,7 @@ public class ItemWebController {
         String imageUrl = req.queryParams("itemImageUrl");
         double price = Double.parseDouble(req.queryParams("itemPrice"));
 
-        String id = UUID.randomUUID().toString().substring(0, 8);
+        String id = UUID.randomUUID().toString();
         CollectibleItem newItem = new CollectibleItem(id, name, description, price);
 
         itemService.createItem(id, newItem);

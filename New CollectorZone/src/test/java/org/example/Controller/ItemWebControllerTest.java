@@ -1,119 +1,176 @@
 package org.example.Controller;
 
-import org.example.Model.ApiException;
-import org.example.Model.CollectibleItem;
-import org.example.Model.ItemService;
+import org.example.Model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 import spark.Request;
 import spark.Response;
 import spark.Session;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Test Unit for ItemWebController.
- * Will use Mockito to mock the dependencies, so we can test the controller.
- */
-@ExtendWith(MockitoExtension.class)
 class ItemWebControllerTest {
 
-
-    @Mock
-    private ItemService mockItemService;
-    @Mock
-    private Request mockRequest;
-    @Mock
-    private Response mockResponse;
-    @Mock
-    private Session mockSession;
-
-
-    @InjectMocks
+    private ItemService itemService;
+    private OfferService offerService;
     private ItemWebController itemWebController;
+    private Request request;
+    private Response response;
+    private Session session;
 
     @BeforeEach
     void setUp() {
+        itemService = mock(ItemService.class);
+        offerService = mock(OfferService.class);
+        itemWebController = new ItemWebController(itemService, offerService);
+        request = mock(Request.class);
+        response = mock(Response.class);
+        session = mock(Session.class);
 
-        when(mockRequest.session(true)).thenReturn(mockSession);
-
-        when(mockRequest.session()).thenReturn(mockSession);
+        when(request.session()).thenReturn(session);
+        when(request.session(anyBoolean())).thenReturn(session);
     }
 
-    /**
-     * TASK 2.3 (GOOD RESPONSE)
-     * A valid form will be sent and the article will be successfully created.
-     */
     @Test
-    void testHandleItemForm_Success() {
-
-        when(mockRequest.queryParams("itemName")).thenReturn("Test Item");
-        when(mockRequest.queryParams("itemDescription")).thenReturn("Test Desc");
-        when(mockRequest.queryParams("itemImageUrl")).thenReturn("");
-        when(mockRequest.queryParams("itemPrice")).thenReturn("123.45");
-
-        String result = itemWebController.handleItemForm(mockRequest, mockResponse);
-
-        verify(mockItemService).createItem(anyString(), any(CollectibleItem.class));
-
-        verify(mockSession).attribute("successMessage", "New item 'Test Item' added successfully!");
-
-        verify(mockResponse).redirect("/items-web");
-
-        assertNull(result);
+    void showItemsPage() {
+        when(itemService.getAllItems()).thenReturn(Collections.emptyList());
+        String result = itemWebController.showItemsPage(request, response);
+        assertTrue(result.contains("items"));
     }
 
-    /**
-     * TASK 2.4 (NEGATIVE RESPONSE - USER ERROR)
-     * User will introduce a nonvalid price.
-     */
     @Test
-    void testHandleItemForm_Fail_InvalidPriceFormat() {
+    void handleItemFormSuccess() {
+        when(request.queryParams("itemName")).thenReturn("Test Item");
+        when(request.queryParams("itemDescription")).thenReturn("Test Description");
+        when(request.queryParams("itemImageUrl")).thenReturn("http://example.com/image.jpg");
+        when(request.queryParams("itemPrice")).thenReturn("100.0");
 
-        when(mockRequest.queryParams("itemName")).thenReturn("Bad Item");
-        when(mockRequest.queryParams("itemDescription")).thenReturn("Test Desc");
-        when(mockRequest.queryParams("itemImageUrl")).thenReturn("");
-        when(mockRequest.queryParams("itemPrice")).thenReturn("not-a-number"); // <-- El error
+        itemWebController.handleItemForm(request, response);
 
-        String result = itemWebController.handleItemForm(mockRequest, mockResponse);
+        ArgumentCaptor<CollectibleItem> itemCaptor = ArgumentCaptor.forClass(CollectibleItem.class);
+        verify(itemService).createItem(anyString(), itemCaptor.capture());
+        assertEquals("Test Item", itemCaptor.getValue().getName());
 
-        verify(mockItemService, never()).createItem(any(), any());
-
-
-        verify(mockSession).attribute("errorMessage", "Invalid price format. Please enter a valid number.");
-
-        verify(mockResponse).redirect("/items-web");
-        assertNull(result);
+        verify(session).attribute("successMessage", "New item 'Test Item' added successfully!");
+        verify(response).redirect("/items-web");
     }
 
-    /**
-     * TASK 2.5 (NEGATIVE RESPONSE - System exception)
-     * Any service throws an exception.
-     */
     @Test
-    void testHandleItemForm_Fail_ApiException() {
+    void handleItemFormApiException() {
+        when(request.queryParams("itemName")).thenReturn("Test Item");
+        when(request.queryParams("itemDescription")).thenReturn("Test Description");
+        when(request.queryParams("itemImageUrl")).thenReturn("http://example.com/image.jpg");
+        when(request.queryParams("itemPrice")).thenReturn("100.0");
 
-        when(mockRequest.queryParams("itemName")).thenReturn("Test Item");
-        when(mockRequest.queryParams("itemDescription")).thenReturn("Test Desc");
-        when(mockRequest.queryParams("itemImageUrl")).thenReturn("");
-        when(mockRequest.queryParams("itemPrice")).thenReturn("123.45");
+        doThrow(new ApiException(500, "Test Exception")).when(itemService).createItem(anyString(), any(CollectibleItem.class));
 
-        ApiException dbExploded = new ApiException(500, "Database exploded");
+        itemWebController.handleItemForm(request, response);
 
-        doThrow(dbExploded).when(mockItemService).createItem(anyString(), any(CollectibleItem.class));
+        verify(session).attribute("errorMessage", "Test Exception");
+        verify(response).redirect("/items-web");
+    }
 
-        String result = itemWebController.handleItemForm(mockRequest, mockResponse);
+    @Test
+    void handleItemFormNumberFormatException() {
+        when(request.queryParams("itemName")).thenReturn("Test Item");
+        when(request.queryParams("itemDescription")).thenReturn("Test Description");
+        when(request.queryParams("itemImageUrl")).thenReturn("http://example.com/image.jpg");
+        when(request.queryParams("itemPrice")).thenReturn("invalid-price");
 
-        verify(mockItemService).createItem(anyString(), any(CollectibleItem.class));
+        itemWebController.handleItemForm(request, response);
 
-        verify(mockSession).attribute("errorMessage", "Database exploded");
+        verify(session).attribute("errorMessage", "Invalid price format. Please enter a valid number.");
+        verify(response).redirect("/items-web");
+    }
 
-        verify(mockResponse).redirect("/items-web");
-        assertNull(result);
+    @Test
+    void showItemsPageWithFilters() {
+        String id = UUID.randomUUID().toString();
+        CollectibleItem item = new CollectibleItem(id, "Test Item", "Test Description", 100.0);
+        when(itemService.getAllItems()).thenReturn(Collections.singletonList(item));
+        when(request.queryParams("search")).thenReturn("Test");
+        when(request.queryParams("minPrice")).thenReturn("50");
+        when(request.queryParams("maxPrice")).thenReturn("150");
+
+        String result = itemWebController.showItemsPage(request, response);
+
+        assertTrue(result.contains("Test Item"));
+    }
+
+    @Test
+    void showItemsPageWithSessionMessages() {
+        when(request.session(false)).thenReturn(session);
+        when(itemService.getAllItems()).thenReturn(Collections.emptyList());
+        when(session.attribute("successMessage")).thenReturn("Success!");
+        when(session.attribute("errorMessage")).thenReturn("Error!");
+
+        String result = itemWebController.showItemsPage(request, response);
+
+        assertTrue(result.contains("Success!"));
+        assertTrue(result.contains("Error!"));
+        verify(session).removeAttribute("successMessage");
+        verify(session).removeAttribute("errorMessage");
+    }
+
+    @Test
+    void showItemsPageWithOffer() {
+        String id = UUID.randomUUID().toString();
+        CollectibleItem item = new CollectibleItem(id, "Test Item", "Test Description", 100.0);
+        Offer offer = new Offer("testuser", "user@test.com", UUID.randomUUID(), 120.0, id, new Date());
+        when(itemService.getAllItems()).thenReturn(Collections.singletonList(item));
+        when(offerService.getLastOffer(UUID.fromString(id))).thenReturn(Optional.of(offer));
+
+        String result = itemWebController.showItemsPage(request, response);
+
+        assertTrue(result.contains("120.0"));
+    }
+
+    @Test
+    void showItemsPageWithNoMatchingFilters() {
+        String id = UUID.randomUUID().toString();
+        CollectibleItem item = new CollectibleItem(id, "Test Item", "Test Description", 100.0);
+        when(itemService.getAllItems()).thenReturn(Collections.singletonList(item));
+        when(request.queryParams("search")).thenReturn("NoMatch");
+
+        String result = itemWebController.showItemsPage(request, response);
+
+        assertFalse(result.contains("Test Item"));
+    }
+
+    @Test
+    void showItemsPageWithInvalidPriceFilters() {
+        String id = UUID.randomUUID().toString();
+        CollectibleItem item = new CollectibleItem(id, "Test Item", "Test Description", 100.0);
+        when(itemService.getAllItems()).thenReturn(Collections.singletonList(item));
+        when(request.queryParams("minPrice")).thenReturn("invalid");
+        when(request.queryParams("maxPrice")).thenReturn("invalid");
+
+        String result = itemWebController.showItemsPage(request, response);
+
+        assertTrue(result.contains("Test Item"));
+    }
+
+    @Test
+    void showItemsPageWithNullSession() {
+        when(request.session(false)).thenReturn(null);
+        when(itemService.getAllItems()).thenReturn(Collections.emptyList());
+        String result = itemWebController.showItemsPage(request, response);
+        assertTrue(result.contains("items"));
+    }
+
+    @Test
+    void showItemsPageWithPriceFilterExcludingItem() {
+        String id = UUID.randomUUID().toString();
+        CollectibleItem item = new CollectibleItem(id, "Test Item", "Test Description", 100.0);
+        when(itemService.getAllItems()).thenReturn(Collections.singletonList(item));
+        when(request.queryParams("minPrice")).thenReturn("150");
+
+        String result = itemWebController.showItemsPage(request, response);
+
+        assertFalse(result.contains("Test Item"));
     }
 }

@@ -40,11 +40,9 @@ mockToasts.forEach(toast => {
   toast.classList.add = jest.fn();
   toast.classList.remove = jest.fn();
 
-  // This is the fix for the 'TypeError: Cannot set property parentNode'
-  // We must use Object.defineProperty to mock a read-only property
   Object.defineProperty(toast, 'parentNode', {
-    value: { removeChild: mockRemoveChild }, // Assign our single mock function
-    configurable: true // Make it configurable for resets
+    value: { removeChild: mockRemoveChild },
+    configurable: true
   });
 });
 
@@ -52,7 +50,7 @@ mockToasts.forEach(toast => {
 const mockLocation = {
   protocol: 'http:',
   host: 'localhost:4567',
-  reload: jest.fn(), // Mock the .reload() function
+  reload: jest.fn(),
 };
 
 // 4. Mock the global 'window' and 'document'
@@ -62,7 +60,7 @@ const mockWindow = {
 const mockDocument = document; // Use Jest's JSDOM 'document'
 
 // 5. Create a fake WebSocket server
-const wsUrl = `${mockLocation.protocol === 'https:' ? 'wss:' : 'ws:'}//${mockLocation.host}/notifications`;
+const wsUrl = `${mockLocation.protocol === 'https:' ? 'wss:' : 'ws:'}
 const server = new WS(wsUrl);
 
 
@@ -91,16 +89,16 @@ describe('WebSocket Logic (Pure Functions)', () => {
   test('processToastNotifications() should show and hide toasts', () => {
     processToastNotifications(mockDocument);
 
-    jest.advanceTimersByTime(300); // Fast-forward past 100ms/200ms timeouts
+    jest.advanceTimersByTime(300);
     expect(mockToasts[0].classList.add).toHaveBeenCalledWith('show');
     expect(mockToasts[1].classList.add).toHaveBeenCalledWith('show');
 
-    jest.advanceTimersByTime(4000); // Fast-forward 4 seconds
+    jest.advanceTimersByTime(4000);
     expect(mockToasts[0].classList.remove).toHaveBeenCalledWith('show');
     expect(mockToasts[1].classList.remove).toHaveBeenCalledWith('show');
 
     jest.advanceTimersByTime(500); // Fast-forward 500ms (for the final fadeout)
-    expect(mockRemoveChild).toHaveBeenCalledTimes(2); // Check it was called twice
+    expect(mockRemoveChild).toHaveBeenCalledTimes(2);
     expect(mockRemoveChild).toHaveBeenCalledWith(mockToasts[0]);
     expect(mockRemoveChild).toHaveBeenCalledWith(mockToasts[1]);
   });

@@ -1,4 +1,4 @@
-package org.example.Model;
+package org.example.model;
 
 import java.util.Date;
 import java.util.UUID;

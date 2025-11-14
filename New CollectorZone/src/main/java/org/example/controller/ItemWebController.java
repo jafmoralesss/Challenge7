@@ -1,6 +1,6 @@
-package org.example.Controller;
+package org.example.controller;
 
-import org.example.Model.*;
+import org.example.model.*;
 import org.example.dto.ItemWebResponse;
 import spark.ModelAndView;
 import spark.Request;
@@ -11,20 +11,41 @@ import spark.template.mustache.MustacheTemplateEngine;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Handles all HTTP requests for the user-facing, HTML-based web interface.
+ * This controller is distinct from {@link ItemController}, which handles the JSON API.
+ * This class is responsible for rendering {@link ModelAndView} objects
+ * using a {@link MustacheTemplateEngine} to produce HTML pages.
+ */
 public class ItemWebController {
 
+    /**
+     * The service layer for item-related business logic, offer-related business logic
+     * and template engine used to render .mustache files into HTML.
+     */
     private final ItemService itemService;
     private final OfferService offerService;
     private final MustacheTemplateEngine templateEngine = new MustacheTemplateEngine();
 
+    /**
+     * Constructs a new ItemWebController with its required service dependencies.
+     *
+     * @param itemService  The service for managing items.
+     * @param offerService The service for managing offers.
+     */
     public ItemWebController(ItemService itemService, OfferService offerService) {
         this.itemService = itemService;
         this.offerService = offerService;
     }
 
     /**
-     * Handles GET /items-web
-     * Muestra la página principal con filtros, notificaciones y la lista de artículos.
+     * Handles the `GET /items-web` request.
+     * Renders the main item browsing page, applying any filters and displaying
+     * session-based notifications (flash messages).
+     *
+     * @param req The Spark HTTP request object.
+     * @param res The Spark HTTP response object.
+     * @return A string containing the rendered HTML for the `items.mustache` page.
      */
     public String showItemsPage(Request req, Response res) {
 
@@ -108,7 +129,15 @@ public class ItemWebController {
         return templateEngine.render(mav);
     }
 
-
+    /**
+     * Handles the submission of the "add new item" form (e.g., `POST /items-web/create`).
+     * It reads form data from the request, attempts to create a new item,
+     * and then redirects back to the main items page with a success or error message.
+     *
+     * @param req The Spark HTTP request object, containing form data as query parameters.
+     * @param res The Spark HTTP response object, used for redirection.
+     * @return This method always returns null, as the response is finalized by `res.redirect()`.
+     */
     public String handleItemForm(Request req, Response res) {
 
         try {

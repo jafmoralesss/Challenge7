@@ -1,9 +1,9 @@
-package org.example.Controller;
+package org.example.controller;
 
 import com.google.gson.Gson;
-import org.example.Model.CollectibleItem;
-import org.example.Model.ItemService;
-import org.example.Model.ApiException;
+import org.example.model.CollectibleItem;
+import org.example.model.ItemService;
+import org.example.model.ApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

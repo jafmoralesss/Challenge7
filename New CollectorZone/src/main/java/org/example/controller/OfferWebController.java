@@ -1,16 +1,19 @@
-package org.example.Controller;
+package org.example.controller;
 
-import com.sun.tools.attach.AttachOperationFailedException;
-import org.example.Model.ItemService;
-import org.example.Model.Offer;
-import org.example.Model.OfferService;
-import org.example.Model.ApiException;
+import org.example.model.Offer;
+import org.example.model.OfferService;
+import org.example.model.ApiException;
 import spark.Request;
 import spark.Response;
 
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Handles HTTP requests related to {@link Offer} objects originating from the
+ * HTML web interface (e.g., form submissions).
+ * This controller is distinct from {@link OfferController}, which handles the JSON API.
+ */
 public class OfferWebController {
 
     private final OfferService offerService;
@@ -19,6 +22,16 @@ public class OfferWebController {
         this.offerService = offerService;
     }
 
+    /**
+     * Handles the submission of the "make an offer" form (e.g., `POST /offer-web/create`).
+     * It reads offer data from the request, attempts to create a new offer,
+     * and then redirects back to the main items page (`/items-web`) with a
+     * success or error "flash message" stored in the session.
+     *
+     * @param req The Spark HTTP request object, containing form data as query parameters.
+     * @param res The Spark HTTP response object, used for redirection.
+     * @return This method always returns null, as the response is finalized by `res.redirect()`.
+     */
     public String handleOfferForm(Request req, Response res) {
 
         try{
@@ -51,5 +64,4 @@ public class OfferWebController {
 
         return null;
     }
-
 }

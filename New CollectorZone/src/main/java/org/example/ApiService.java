@@ -1,15 +1,15 @@
 package org.example;
 
 import com.google.gson.Gson;
-import org.example.Controller.ItemController;
-import org.example.Controller.ItemWebController;
-import org.example.Controller.OfferController;
-import org.example.Controller.OfferWebController;
-import org.example.Model.ApiError;
-import org.example.Model.ApiException;
-import org.example.Model.ItemService;
-import org.example.Model.OfferService;
-import org.example.Model.Database;
+import org.example.controller.ItemController;
+import org.example.controller.ItemWebController;
+import org.example.controller.OfferController;
+import org.example.controller.OfferWebController;
+import org.example.model.ApiError;
+import org.example.model.ApiException;
+import org.example.model.ItemService;
+import org.example.model.OfferService;
+import org.example.model.Database;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.io.InputStream;
@@ -21,6 +21,13 @@ import static spark.Spark.*;
 
 public class ApiService {
 
+    /**
+     * Reads and executes the `setup-dev.sql` script from the project's resources.
+     * This method is intended for development environments to initialize or reset
+     * the database schema and any seed data.
+     * <p>
+     * It prints status messages to standard out and errors to standard err.
+     */
     public static void runInitScript() {
         String script = "";
         try (InputStream is = ApiService.class.getClassLoader().getResourceAsStream("setup-dev.sql")) {
@@ -47,6 +54,14 @@ public class ApiService {
         }
     }
 
+    /**
+     * The main application entry point.
+     * This method starts the SparkJava server, configures it,
+     * and defines all application routes.
+     *
+     *
+     * @param args Command line arguments (not used by this application).
+     */
     public static void main(String[] args) {
 
         if (System.getenv("APP_ENV") == null || !System.getenv("APP_ENV").equals("prod")) {

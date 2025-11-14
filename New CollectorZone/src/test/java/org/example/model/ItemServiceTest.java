@@ -1,4 +1,4 @@
-package org.example.Model;
+package org.example.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

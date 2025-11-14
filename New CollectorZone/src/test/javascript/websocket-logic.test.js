@@ -60,7 +60,7 @@ const mockWindow = {
 const mockDocument = document; // Use Jest's JSDOM 'document'
 
 // 5. Create a fake WebSocket server
-const wsUrl = `${mockLocation.protocol === 'https:' ? 'wss:' : 'ws:'}
+const wsUrl = mockLocation.protocol === 'https:' ? 'wss:' : 'ws:'
 const server = new WS(wsUrl);
 
 

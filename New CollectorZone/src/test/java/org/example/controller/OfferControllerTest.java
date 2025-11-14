@@ -1,8 +1,8 @@
-package org.example.Controller;
+package org.example.controller;
 
 import com.google.gson.Gson;
-import org.example.Model.Offer;
-import org.example.Model.OfferService;
+import org.example.model.Offer;
+import org.example.model.OfferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
